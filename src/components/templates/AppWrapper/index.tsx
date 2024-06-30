@@ -5,9 +5,13 @@ import React from "react";
 export const AppWrapper: React.FC = () => {
     return (
         <>
-            THIS IS THE APP WRAPPER
+            {/* <p style={{ position: "absolute", top: 0, height: "fit-content" }}> */}
+            Puffsterz
+            {/* </p> */}
             <hr />
-            <Outlet />
+            <div style={{ border: "1px solid red", flexGrow: 1 }}>
+                <Outlet />
+            </div>
         </>
     );
 };
