@@ -1,5 +1,6 @@
 // src/components/AppWrapper.tsx
-import { Box, Toolbar } from "@mui/material";
+import { Toolbar, Box } from "@mui/material";
+
 import { Outlet } from "@tanstack/react-router";
 import React from "react";
 import WalletContextProvider from "components/organisms/Wallet/WalletProvider";
@@ -9,9 +10,9 @@ export const AppWrapper: React.FC = () => {
     return (
         <WalletContextProvider>
             <Box
-                sx={{
-                    m: 0,
-                    p: 0,
+                style={{
+                    margin: 0,
+                    padding: 0,
                     display: "flex",
                     flexDirection: "column",
                     height: "100vh"
