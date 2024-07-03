@@ -4,6 +4,7 @@ import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Box, Button, Typography } from "@mui/material";
 import { LogoutOutlined, WalletRounded } from "@mui/icons-material";
+import { onConnected } from "utils/auth";
 
 const CustomConnectButton: React.FC = () => {
     const { setVisible } = useWalletModal();
@@ -21,14 +22,14 @@ const CustomConnectButton: React.FC = () => {
             setVisible(true);
         }
     }, [connected, setVisible]);
-    console.log(wallet, "wallet info");
-    useEffect(() => {
-        console.log(publicKey);
-    });
 
     useEffect(() => {
         if (wallet?.readyState === "Installed" && !connected) connect();
     }, [connect, connected, publicKey, wallet?.readyState]);
+
+    useEffect(() => {
+        if (connected) onConnected({ publicKey: publicKey });
+    }, [connected, publicKey]);
 
     const showText = connected || connecting;
     return (
