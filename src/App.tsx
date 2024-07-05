@@ -9,6 +9,8 @@ import "@fontsource/roboto/700.css";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import theme from "theme/theme";
 
+import "utils/assetList";
+
 function App() {
     return (
         <ThemeProvider theme={theme}>
