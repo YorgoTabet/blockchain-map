@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PublicKey } from "@solana/web3.js";
 import {
     Button,
@@ -8,7 +8,7 @@ import {
     DialogTitle,
     TextField
 } from "@mui/material";
-import { storeUserLocation } from "services/firebase";
+import { storeUserLocation, getUserName } from "services/firebase";
 
 interface ProfileButtonProps {
     publicKey: PublicKey;
@@ -17,6 +17,21 @@ interface ProfileButtonProps {
 const ProfileButton: React.FC<ProfileButtonProps> = ({ publicKey }) => {
     const [open, setOpen] = useState(false);
     const [name, setName] = useState("");
+
+    useEffect(() => {
+        if (open) {
+            (async () => {
+                try {
+                    const storedName = await getUserName(publicKey);
+                    if (storedName) {
+                        setName(storedName);
+                    }
+                } catch (error) {
+                    console.error("Error fetching user name:", error);
+                }
+            })();
+        }
+    }, [open, publicKey]);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -56,7 +71,7 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({ publicKey }) => {
                 <DialogContent>
                     <TextField
                         margin="dense"
-                        label="Public Key"
+                        label="Wallet Address"
                         type="text"
                         fullWidth
                         value={publicKey.toBase58()}

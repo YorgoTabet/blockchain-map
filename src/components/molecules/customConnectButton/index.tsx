@@ -66,7 +66,7 @@ const CustomConnectButton: React.FC = () => {
 
     const showText = connected || connecting;
     return (
-        <Box>
+        <Box display="flex" alignItems="center" gap={2}>
             <Button
                 disabled={connected}
                 variant="contained"
@@ -85,12 +85,11 @@ const CustomConnectButton: React.FC = () => {
                     <Button color="primary" variant="contained" onClick={() => disconnect()}>
                         <LogoutOutlined />
                     </Button>
-                    <Typography>
-                        {ownsPuffsterz
-                            ? "You own a Puffsterz NFT!"
-                            : "You do not own a Puffsterz NFT."}
-                    </Typography>
-                    {ownsPuffsterz && <ProfileButton publicKey={publicKey!} />}
+                    {ownsPuffsterz && (
+                        <Box ml={2}>
+                            <ProfileButton publicKey={publicKey!} />
+                        </Box>
+                    )}
                 </>
             )}
         </Box>
