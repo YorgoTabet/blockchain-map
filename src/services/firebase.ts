@@ -1,11 +1,10 @@
 // src/utils/location.ts
 import { PublicKey } from "@solana/web3.js";
-import { collection, doc, getDocs, setDoc } from "firebase/firestore";
-
+import { doc, getDocs, setDoc, collection } from "firebase/firestore";
 import { Location } from "../model/location";
 import { fireStoreDb } from "utils/firebase";
 
-export const storeUserLocation = async (loc: Location, key: PublicKey | null) => {
+export const storeUserLocation = async (loc: Location, key: PublicKey | null, name: string) => {
     if (!key) {
         console.error("PublicKey is null");
         return;
@@ -13,6 +12,7 @@ export const storeUserLocation = async (loc: Location, key: PublicKey | null) =>
 
     const userKey = key.toString();
     const locationData = {
+        name: name,
         lat: loc.lat,
         lng: loc.lng,
         timestamp: new Date()
@@ -20,18 +20,20 @@ export const storeUserLocation = async (loc: Location, key: PublicKey | null) =>
 
     try {
         await setDoc(doc(fireStoreDb, "userLocations", userKey), locationData);
-        console.log(`Location stored for user ${userKey}:`, locationData);
+        console.log(`Location and name stored for user ${userKey}:`, locationData);
     } catch (error) {
-        console.error("Error storing user location:", error);
+        console.error("Error storing user location and name:", error);
     }
 };
 
-export const getUserLocations = async (): Promise<{ [key: string]: Location }> => {
-    const locations: { [key: string]: Location } = {};
+export const getUserLocations = async (): Promise<{
+    [key: string]: Location & { name: string };
+}> => {
+    const locations: { [key: string]: Location & { name: string } } = {};
     try {
         const querySnapshot = await getDocs(collection(fireStoreDb, "userLocations"));
         querySnapshot.forEach((doc) => {
-            locations[doc.id] = doc.data() as Location;
+            locations[doc.id] = doc.data() as Location & { name: string };
         });
     } catch (error) {
         console.error("Error getting user locations:", error);

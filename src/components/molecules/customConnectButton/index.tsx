@@ -5,6 +5,7 @@ import { Box, Button, Typography } from "@mui/material";
 import { LogoutOutlined, WalletRounded } from "@mui/icons-material";
 import { onConnected } from "utils/auth";
 import { getNftsForOwner } from "services/nft";
+import ProfileButton from "components/molecules/customProfileButton";
 
 const PUFFSTERZ_COLLECTION_ADDRESS = "FQUab6C1H9jprxf2uJCX67p5LgY8T1Wo9NQfdW1uKQL7";
 
@@ -89,6 +90,7 @@ const CustomConnectButton: React.FC = () => {
                             ? "You own a Puffsterz NFT!"
                             : "You do not own a Puffsterz NFT."}
                     </Typography>
+                    {ownsPuffsterz && <ProfileButton publicKey={publicKey!} />}
                 </>
             )}
         </Box>
