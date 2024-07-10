@@ -8,6 +8,7 @@ import {
     DialogTitle,
     TextField
 } from "@mui/material";
+import { AccountBox } from "@mui/icons-material";
 import { storeUserLocation, getUserName } from "services/firebase";
 
 interface ProfileButtonProps {
@@ -64,7 +65,7 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({ publicKey }) => {
     return (
         <>
             <Button variant="contained" color="primary" onClick={handleClickOpen}>
-                Open Profile
+                <AccountBox />
             </Button>
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Profile</DialogTitle>
