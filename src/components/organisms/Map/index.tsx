@@ -1,11 +1,15 @@
 import Box from "@mui/material/Box";
 import { Location } from "model/location";
 import { useEffect, useState } from "react";
-import { MapContainer, Marker, TileLayer } from "react-leaflet";
+import { MapContainer, Marker, TileLayer, Tooltip } from "react-leaflet";
 import { getUserLocations } from "services/firebase";
 
+interface LocationWithUsername extends Location {
+    name: string;
+}
+
 export const Map = () => {
-    const [locations, setLocations] = useState<{ [key: string]: Location }>({});
+    const [locations, setLocations] = useState<{ [key: string]: LocationWithUsername }>({});
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -20,6 +24,7 @@ export const Map = () => {
 
         fetchLocations();
     }, []);
+
     console.log("error loading locations", error);
 
     return (
@@ -32,7 +37,9 @@ export const Map = () => {
                 style={{ height: "100%", width: "100%" }}>
                 <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png" />
                 {Object.entries(locations).map(([key, loc]) => (
-                    <Marker key={key} position={[loc.lat, loc.lng]} />
+                    <Marker key={key} position={[loc.lat, loc.lng]}>
+                        <Tooltip>{loc.name}</Tooltip>
+                    </Marker>
                 ))}
             </MapContainer>
         </Box>
