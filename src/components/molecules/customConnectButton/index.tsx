@@ -3,7 +3,7 @@ import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Box, Button, Typography } from "@mui/material";
 import { LogoutOutlined, WalletRounded } from "@mui/icons-material";
-import { onConnected } from "utils/auth";
+
 import { getNftsForOwner } from "services/nft";
 import ProfileButton from "components/molecules/customProfileButton";
 
@@ -39,10 +39,6 @@ const CustomConnectButton: React.FC = () => {
     useEffect(() => {
         if (wallet?.readyState === "Installed" && !connected) connect();
     }, [connect, connected, wallet?.readyState]);
-
-    useEffect(() => {
-        if (connected) onConnected({ publicKey: publicKey });
-    }, [connected, publicKey]);
 
     useEffect(() => {
         const checkNftOwnership = async () => {
