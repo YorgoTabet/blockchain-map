@@ -9,7 +9,8 @@ import {
     TextField
 } from "@mui/material";
 import { AccountBox } from "@mui/icons-material";
-import { storeUserLocation, getUserName } from "services/firebase";
+import { getUserName } from "services/firebase";
+import { onConnected } from "utils/auth";
 
 interface ProfileButtonProps {
     publicKey: PublicKey;
@@ -43,23 +44,7 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({ publicKey }) => {
     };
 
     const handleSave = async () => {
-        navigator.geolocation.getCurrentPosition(
-            async (position) => {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
-                try {
-                    await storeUserLocation({ lat, lng }, publicKey, name);
-                    console.log("Data saved successfully");
-                } catch (error) {
-                    console.error("Error saving data:", error);
-                }
-                handleClose();
-            },
-            (error) => {
-                console.error("Error getting location:", error);
-                handleClose();
-            }
-        );
+        onConnected({ publicKey, name });
     };
 
     return (

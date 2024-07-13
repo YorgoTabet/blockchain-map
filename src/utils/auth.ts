@@ -1,14 +1,15 @@
-import { storeUserLocation } from "services/firebase";
 import { getUserLocation } from "./location";
 import { PublicKey } from "@solana/web3.js";
 import { Location } from "model/location";
+import { callLambdaFunction } from "services/user";
 
 export interface userDetails {
     publicKey: PublicKey | null;
+    name: string;
 }
 
-export const onConnected = async ({ publicKey }: userDetails) => {
+export const onConnected = async ({ publicKey, name }: userDetails) => {
     const location = await getUserLocation();
 
-    storeUserLocation(location as Location, publicKey);
+    callLambdaFunction(publicKey?.toString(), name, location as Location);
 };
