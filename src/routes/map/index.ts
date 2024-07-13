@@ -4,6 +4,6 @@ import { rootRoute } from "routes/root";
 
 export const mapRoute = createRoute({
     component: Map,
-    path: "/map",
+    path: "/",
     getParentRoute: () => rootRoute
 });
