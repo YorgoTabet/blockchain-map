@@ -6,7 +6,8 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    TextField
+    TextField,
+    Typography
 } from "@mui/material";
 import { AccountBox } from "@mui/icons-material";
 import { getUserName } from "services/firebase";
@@ -76,10 +77,10 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({ publicKey }) => {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="primary">
-                        Cancel
+                        <Typography>Cancel</Typography>
                     </Button>
                     <Button onClick={handleSave} color="primary">
-                        Save
+                        <Typography>Save</Typography>
                     </Button>
                 </DialogActions>
             </Dialog>
