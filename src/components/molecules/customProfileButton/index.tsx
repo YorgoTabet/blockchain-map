@@ -12,8 +12,9 @@ import {
     Box
 } from "@mui/material";
 import { AccountBox } from "@mui/icons-material";
-import { getUserName } from "services/firebase";
+import { getUserName, getUserLocations } from "services/firebase";
 import { onConnected } from "utils/auth";
+import { fetchCountryCity } from "utils/location";
 
 interface ProfileButtonProps {
     publicKey: PublicKey;
@@ -24,6 +25,9 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({ publicKey }) => {
     const [name, setName] = useState("");
     const [avatar, setAvatar] = useState<File | null>(null);
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+    const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
+    const [country, setCountry] = useState<string>("");
+    const [city, setCity] = useState<string>("");
 
     useEffect(() => {
         if (open) {
@@ -33,8 +37,21 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({ publicKey }) => {
                     if (storedName) {
                         setName(storedName);
                     }
+
+                    const userLocations = await getUserLocations();
+                    const userLocation = userLocations[publicKey.toString()];
+                    if (userLocation) {
+                        setLocation({ lat: userLocation.lat, lng: userLocation.lng });
+
+                        const { country, city } = await fetchCountryCity(
+                            userLocation.lat,
+                            userLocation.lng
+                        );
+                        setCountry(country);
+                        setCity(city);
+                    }
                 } catch (error) {
-                    console.error("Error fetching user name:", error);
+                    console.error("Error fetching user data:", error);
                 }
             })();
         }
@@ -93,6 +110,18 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({ publicKey }) => {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                     />
+                    {location && (
+                        <TextField
+                            margin="dense"
+                            label="Location"
+                            type="text"
+                            fullWidth
+                            value={`\nCountry: ${country}, City: ${city}`}
+                            InputProps={{
+                                readOnly: true
+                            }}
+                        />
+                    )}
                     <input
                         style={{ display: "none" }}
                         id="avatar-upload"
