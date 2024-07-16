@@ -1,11 +1,15 @@
 import Box from "@mui/material/Box";
-import { Location } from "model/location";
 import { useEffect, useState } from "react";
-import { MapContainer, Marker, TileLayer, Tooltip } from "react-leaflet";
+import { MapContainer, Marker, TileLayer, Popup } from "react-leaflet";
 import { getUserLocations } from "services/firebase";
+import { fetchCountryCity } from "utils/location";
 
-interface LocationWithUsername extends Location {
+interface LocationWithUsername {
     name: string;
+    lat: number;
+    lng: number;
+    city?: string;
+    country?: string;
 }
 
 export const Map = () => {
@@ -16,7 +20,13 @@ export const Map = () => {
         const fetchLocations = async () => {
             try {
                 const locs = await getUserLocations();
-                setLocations(locs);
+                const updatedLocs = await Promise.all(
+                    Object.entries(locs).map(async ([, loc]) => {
+                        const { city, country } = await getLocationInfo(loc.lat, loc.lng);
+                        return { ...loc, city, country };
+                    })
+                );
+                setLocations(Object.fromEntries(updatedLocs.map((loc) => [loc.name, loc])));
             } catch (err) {
                 setError("Failed to fetch locations");
             }
@@ -26,6 +36,19 @@ export const Map = () => {
     }, []);
 
     console.log("error loading locations", error);
+
+    const getLocationInfo = async (
+        lat: number,
+        lng: number
+    ): Promise<{ city: string; country: string }> => {
+        try {
+            const { city, country } = await fetchCountryCity(lat, lng);
+            return { city, country };
+        } catch (error) {
+            console.error("Failed to fetch city and country:", error);
+            return { city: "Unknown", country: "Unknown" };
+        }
+    };
 
     return (
         <Box height={"100%"} width={"100%"}>
@@ -38,7 +61,13 @@ export const Map = () => {
                 <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png" />
                 {Object.entries(locations).map(([key, loc]) => (
                     <Marker key={key} position={[loc.lat, loc.lng]}>
-                        <Tooltip>{loc.name}</Tooltip>
+                        <Popup>
+                            <div style={{ minWidth: "500px", minHeight: "300px" }}>
+                                <h3>{loc.name}</h3>
+                                <p>Country: {loc.country || "Loading..."}</p>
+                                <p>City: {loc.city || "Loading..."}</p>
+                            </div>
+                        </Popup>
                     </Marker>
                 ))}
             </MapContainer>

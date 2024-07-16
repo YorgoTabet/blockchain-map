@@ -11,15 +11,32 @@ interface LambdaBody {
 
 const API_URL = "https://eogj888dzi.execute-api.eu-central-1.amazonaws.com/prod";
 
-export const callLambdaFunction = async (publicKey = "", name: string, loc: Location) => {
+const getBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = (error) => reject(error);
+    });
+};
+
+export const callLambdaFunction = async (
+    publicKey = "",
+    name: string,
+    loc: Location,
+    avatar: File | null
+) => {
     if (!publicKey) window.alert("Invalid wallet credentials");
     console.log("storing to lambda");
     try {
+        const avatarBase64 = avatar ? await getBase64(avatar) : null;
+
         const { data }: LambdaResponse = await axios.post(API_URL, {
             body: JSON.stringify({
                 publicKey: publicKey,
                 name: name,
-                loc: loc
+                loc: loc,
+                avatar: avatarBase64
             })
         });
         if (data?.statusCode === 403)
