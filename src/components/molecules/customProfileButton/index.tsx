@@ -9,7 +9,8 @@ import {
     TextField,
     Typography,
     Avatar,
-    Box
+    Box,
+    Snackbar
 } from "@mui/material";
 import { AccountBox } from "@mui/icons-material";
 import { getUserName, getUserLocations } from "services/firebase";
@@ -26,11 +27,11 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({ publicKey }) => {
 
     const [open, setOpen] = useState(false);
     const [name, setName] = useState("");
-
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
     const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
     const [country, setCountry] = useState<string>("");
     const [city, setCity] = useState<string>("");
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
 
     useEffect(() => {
         if (open) {
@@ -69,9 +70,15 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({ publicKey }) => {
         setOpen(false);
     };
 
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
+    };
+
     const handleSave = async () => {
         if (publicKey && name) {
             await onConnected({ publicKey, name, avatar: avatarUrl ?? "" });
+            setSnackbarOpen(true);
+            setOpen(false);
         }
     };
 
@@ -102,7 +109,6 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({ publicKey }) => {
                                 onClick={() => setAvatarUrl(el)}
                                 sx={{
                                     borderRadius: "50%",
-                                    backgroundColor: "rgba(0,0,0, 0.5",
                                     zIndex: 10
                                 }}>
                                 <Avatar src={el} sx={{ width: 60, height: 60, zIndex: 9 }} />
@@ -139,13 +145,6 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({ publicKey }) => {
                             }}
                         />
                     )}
-                    {/* <input
-                        style={{ display: "none" }}
-                        id="avatar-upload"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleAvatarChange}
-                    /> */}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="primary">
@@ -156,6 +155,17 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({ publicKey }) => {
                     </Button>
                 </DialogActions>
             </Dialog>
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={6000}
+                onClose={handleSnackbarClose}
+                message="Profile saved successfully"
+                action={
+                    <Button color="inherit" size="small" onClick={handleSnackbarClose}>
+                        Close
+                    </Button>
+                }
+            />
         </>
     );
 };
