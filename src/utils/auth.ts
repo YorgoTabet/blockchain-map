@@ -6,10 +6,11 @@ import { callLambdaFunction } from "services/user";
 export interface userDetails {
     publicKey: PublicKey | null;
     name: string;
+    avatar: string;
 }
 
-export const onConnected = async ({ publicKey, name }: userDetails) => {
+export const onConnected = async ({ publicKey, name, avatar }: userDetails) => {
     const location = await getUserLocation();
 
-    callLambdaFunction(publicKey?.toString(), name, location as Location);
+    callLambdaFunction(publicKey?.toString(), name, location as Location, avatar);
 };

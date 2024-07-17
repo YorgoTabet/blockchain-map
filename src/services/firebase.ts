@@ -43,13 +43,13 @@ export const getUserName = async (key: PublicKey): Promise<string | null> => {
 };
 
 export const getUserLocations = async (): Promise<{
-    [key: string]: Location & { name: string };
+    [key: string]: Location & { name: string; avatar: string };
 }> => {
-    const locations: { [key: string]: Location & { name: string } } = {};
+    const locations: { [key: string]: Location & { name: string; avatar: string } } = {};
     try {
         const querySnapshot = await getDocs(collection(fireStoreDb, "userLocations"));
         querySnapshot.forEach((doc) => {
-            locations[doc.id] = doc.data() as Location & { name: string };
+            locations[doc.id] = doc.data() as Location & { name: string; avatar: string };
         });
     } catch (error) {
         console.error("Error getting user locations:", error);

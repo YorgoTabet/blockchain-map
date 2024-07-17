@@ -23,3 +23,26 @@ export const getUserLocation = async () => {
         }
     });
 };
+export const fetchCountryCity = async (
+    lat: number,
+    lng: number
+): Promise<{ country: string; city: string }> => {
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data && data.address) {
+            const country = data.address.country || "";
+            const city = data.address.city || data.address.town || data.address.village || "";
+
+            return { country, city };
+        } else {
+            throw new Error("No results found");
+        }
+    } catch (error) {
+        console.error("Error fetching country and city:", error);
+        throw new Error("Failed to fetch country and city");
+    }
+};

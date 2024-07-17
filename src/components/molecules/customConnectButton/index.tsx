@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Box, Button, Typography } from "@mui/material";
@@ -6,6 +6,7 @@ import { LogoutOutlined, WalletRounded } from "@mui/icons-material";
 
 import { getNftsForOwner } from "services/nft";
 import ProfileButton from "components/molecules/customProfileButton";
+import { UserDetailsContext } from "context/userContext";
 
 const PUFFSTERZ_COLLECTION_ADDRESS = "FQUab6C1H9jprxf2uJCX67p5LgY8T1Wo9NQfdW1uKQL7";
 
@@ -18,6 +19,8 @@ interface GetAssetResponse {
 }
 
 const CustomConnectButton: React.FC = () => {
+    const { setUserNfts } = useContext(UserDetailsContext);
+
     const { setVisible } = useWalletModal();
     const { connected, wallet, disconnect, connecting, publicKey, connect, disconnecting } =
         useWallet();
@@ -45,12 +48,21 @@ const CustomConnectButton: React.FC = () => {
             if (publicKey) {
                 try {
                     const nfts = await getNftsForOwner(publicKey.toBase58(), 1);
-                    const ownsPuffsterz = nfts.items.some((nft: GetAssetResponse) =>
+
+                    const puffsterzNfts = nfts.items.filter((nft: GetAssetResponse) =>
                         nft.grouping?.some(
                             (group: Group) => group.group_value === PUFFSTERZ_COLLECTION_ADDRESS
                         )
                     );
-                    setOwnsPuffsterz(ownsPuffsterz);
+                    setOwnsPuffsterz(!!puffsterzNfts.length);
+                    setUserNfts(
+                        puffsterzNfts
+                            .map((el) => el.content?.files?.map((child) => child?.uri))
+                            .flat()
+                            .filter((uri): uri is string => uri !== undefined)
+                    );
+
+                    console.log(puffsterzNfts);
                 } catch (error) {
                     console.error("Error fetching NFTs: ", error);
                 }
@@ -58,7 +70,7 @@ const CustomConnectButton: React.FC = () => {
         };
 
         if (connected) checkNftOwnership();
-    }, [connected, publicKey]);
+    }, [connected, publicKey, setUserNfts]);
 
     const showText = connected || connecting;
     return (
