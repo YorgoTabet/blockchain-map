@@ -8,12 +8,15 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import theme from "theme/theme";
+import { UserDetailsContextProvider } from "context/userContext";
 
 function App() {
     return (
         <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <RouterProvider router={router} />
+            <UserDetailsContextProvider>
+                <CssBaseline />
+                <RouterProvider router={router} />
+            </UserDetailsContextProvider>
         </ThemeProvider>
     );
 }
