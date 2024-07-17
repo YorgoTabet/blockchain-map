@@ -14,8 +14,6 @@ interface LocationWithUsername {
     avatar?: string;
 }
 
-const POLLING_INTERVAL = 5000;
-
 export const Map = () => {
     const [locations, setLocations] = useState<{ [key: string]: LocationWithUsername }>({});
     const [error, setError] = useState<string | null>(null);
@@ -37,9 +35,6 @@ export const Map = () => {
         };
 
         fetchLocations();
-        const intervalId = setInterval(fetchLocations, POLLING_INTERVAL);
-
-        return () => clearInterval(intervalId);
     }, []);
 
     console.log("error loading locations", error);
