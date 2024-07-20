@@ -70,7 +70,7 @@ const CustomConnectButton: React.FC = () => {
         };
 
         if (connected) checkNftOwnership();
-    }, [connected, publicKey, setUserNfts]);
+    }, [connected, publicKey]);
 
     const showText = connected || connecting;
     return (
