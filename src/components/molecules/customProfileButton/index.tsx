@@ -90,13 +90,14 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({ publicKey }) => {
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Profile</DialogTitle>
                 <DialogContent>
-                    {
-                        <Box display="flex" justifyContent="center" mb={2}>
-                            <Avatar src={avatarUrl ?? ""} sx={{ width: 120, height: 120 }} />
-                        </Box>
-                    }
+                    <Box display="flex" justifyContent="center" mb={2}>
+                        <Avatar src={avatarUrl ?? ""} sx={{ width: 120, height: 120 }} />
+                    </Box>
+                    <Typography variant="subtitle1">Choose your PFP below:</Typography>
                     <Box
                         sx={{
+                            display: "flex",
+                            overflowX: "auto",
                             marginY: 5,
                             border: "1px solid black",
                             borderRadius: "15px",
@@ -109,7 +110,8 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({ publicKey }) => {
                                 onClick={() => setAvatarUrl(el)}
                                 sx={{
                                     borderRadius: "50%",
-                                    zIndex: 10
+                                    zIndex: 10,
+                                    marginRight: 1
                                 }}>
                                 <Avatar src={el} sx={{ width: 60, height: 60, zIndex: 9 }} />
                             </Box>
